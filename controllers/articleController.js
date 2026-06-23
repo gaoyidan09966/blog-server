@@ -389,6 +389,46 @@ exports.getLatestArticles = async (req, res) => {
   }
 };
 
+// 获取上下篇文章
+exports.getArticleNav = async (req, res) => {
+  try {
+    const articleId = parseInt(req.params.id);
+
+    const [current] = await db.query(
+      "SELECT create_time FROM article WHERE id = ?",
+      [articleId],
+    );
+
+    if (current.length === 0) {
+      return res.status(404).json({ code: 404, message: "文章不存在" });
+    }
+
+    const createTime = current[0].create_time;
+
+    const [prevRows] = await db.query(
+      "SELECT id, title FROM article WHERE status = 1 AND create_time > ? ORDER BY create_time ASC LIMIT 1",
+      [createTime],
+    );
+
+    const [nextRows] = await db.query(
+      "SELECT id, title FROM article WHERE status = 1 AND create_time < ? ORDER BY create_time DESC LIMIT 1",
+      [createTime],
+    );
+
+    res.json({
+      code: 200,
+      message: "获取成功",
+      data: {
+        prev: prevRows.length > 0 ? prevRows[0] : null,
+        next: nextRows.length > 0 ? nextRows[0] : null,
+      },
+    });
+  } catch (error) {
+    console.error("获取上下篇文章错误:", error);
+    res.status(500).json({ code: 500, message: "服务器内部错误" });
+  }
+};
+
 // 点赞文章
 exports.likeArticle = async (req, res) => {
   const { id } = req.params;

@@ -16,6 +16,8 @@ router.get("/hot", articleController.getHotArticles);
 router.get("/latest", articleController.getLatestArticles);
 // 获取推荐文章（公开接口）
 router.get("/recommend", articleController.getRecommendArticles);
+// 获取文章导航（公开接口）
+router.get("/:id/nav", articleController.getArticleNav);
 
 // 2. 图片上传接口
 router.post("/upload", authMiddleware, upload.single("image"), (req, res) => {
