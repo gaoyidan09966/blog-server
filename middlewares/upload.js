@@ -25,7 +25,7 @@ const storage = multer.diskStorage({
 
 // 2. 企业级文件类型过滤器（只允许图片）
 const fileFilter = (req, file, cb) => {
-  const allowedTypes = /jpeg|jpg|png|gif/;
+  const allowedTypes = /jpeg|jpg|png|gif|webp/;
   // 校验后缀名和 MimeType 类型
   const extname = allowedTypes.test(
     path.extname(file.originalname).toLowerCase(),
@@ -35,7 +35,7 @@ const fileFilter = (req, file, cb) => {
   if (extname && mimetype) {
     return cb(null, true); // 是合规图片，放行！
   } else {
-    cb(new Error("格式错误：仅允许上传 JPG/PNG/GIF 格式的图片！"), false);
+    cb(new Error("格式错误：仅允许上传 JPG/PNG/GIF/WebP 格式的图片！"), false);
   }
 };
 
@@ -44,7 +44,7 @@ const upload = multer({
   storage: storage,
   fileFilter: fileFilter,
   limits: {
-    fileSize: 2 * 1024 * 1024, // 限制文件最大为 2MB
+    fileSize: 10 * 1024 * 1024, // 限制文件最大为 10MB
   },
 });
 
